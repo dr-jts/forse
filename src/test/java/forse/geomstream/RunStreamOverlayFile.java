@@ -93,40 +93,6 @@ public class RunStreamOverlayFile
   }
   
 
-  Geometry OLDoverlay(GeometryStream g1, GeometryStream g2, boolean isUnion)
-  {
-    MergeSortGeometryStream merger = new MergeSortGeometryStream();
-    merger.add(g1);
-    if (g2 != null) merger.add(g2);
-    GeometryStreamSegmentSource segSrc = new GeometryStreamSegmentSource(merger);
-
-    SweepLineNoder noder = new SweepLineNoder();
-    segSrc.setSink(noder);
-    
-    //StatisticsSegmentSink statSegSink = new StatisticsSegmentSink();
-    //noder.setSink(statSegSink);
-
-    //*
-    SweepLinePolygonizer polygonizer = new SweepLinePolygonizer(geomFact);
-    polygonizer.setUnion(isUnion);
-    polygonizer.setUnionCreateHolesAsPolys(isUnion);
-    noder.setSink(polygonizer);
-    
-    StatisticsGeometrySink gcSink = new StatisticsGeometrySink();
-    //GeometryCreatorSink gcSink = new GeometryCreatorSink(geomFact);
-    polygonizer.setSink(gcSink);
-    //*/
-    
-    segSrc.process();
-    
-    System.out.println("Input - Polygons: " 
-        + merger.getGeometryCount()
-        + "   Pts: " + merger.getCoordinateCount());
-        
-    return null;
-  }
-  
-
 	
   
 

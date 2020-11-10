@@ -32,6 +32,7 @@ public class PolygonOverlayGeometryStream implements GeometryStream
   public void setValidating(boolean isValidating) {
 	  this.isValidating = isValidating;
   }
+  
   public void create(GeometryStream g1, GeometryStream g2)
   {
     merger = new MergeSortGeometryStream();
