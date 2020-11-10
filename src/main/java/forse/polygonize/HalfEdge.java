@@ -6,7 +6,6 @@ import forse.lineseg.TopologyLabel;
 
 import org.locationtech.jts.algorithm.*;
 import org.locationtech.jts.geom.*;
-import org.locationtech.jts.geomgraph.Quadrant;
 import org.locationtech.jts.util.*;
 
 /**
