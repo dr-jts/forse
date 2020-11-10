@@ -182,6 +182,11 @@ public class FastOverlayFunctions
     return union(g1, g2, null, true);
   }
   
+  public static Geometry unionWithHolesAsPolysPrec(Geometry g1, Geometry g2, double precisionScaleFactor)
+  {
+    return union(g1, g2, new PrecisionModel(precisionScaleFactor), true);
+  }
+  
   public static Geometry unionWithPrecision(Geometry g1, Geometry g2, double precisionScaleFactor)
   {
     return union(g1, g2, new PrecisionModel(precisionScaleFactor), false);
