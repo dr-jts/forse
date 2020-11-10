@@ -6,14 +6,14 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.util.Memory;
 import org.locationtech.jts.util.Stopwatch;
 
-import forse.geomsink.StatisticsGeometrySink;
-import forse.noding.SweepLineNoder;
-import forse.polygonize.SweepLinePolygonizer;
-
 
 
 public class RunStreamOverlayFile 
 {
+  static PrecisionModel DEMO_PM = new PrecisionModel(1000000000);
+  static String DEMO_FILE_1 = "D:/proj/jts/testing/pglist-20200708/dbca-poly-sort.wkt";
+  static String DEMO_FILE_2 = null;
+	  
   public static void main(String[] args) throws Exception
   {
   	RunStreamOverlayFile test = new RunStreamOverlayFile();
@@ -25,28 +25,20 @@ public class RunStreamOverlayFile
     }
   }
   
-  private PrecisionModel precModel = new PrecisionModel(1000000000);
+  private PrecisionModel precModel = DEMO_PM;
+  private String filename1 = DEMO_FILE_1;
+  private String filename2 = DEMO_FILE_2;
+  
   private GeometryFactory geomFact = new GeometryFactory(precModel);
   private boolean isOutput = false;
 
   void run() throws Exception 
   {
-	  runTest();
+	boolean isUnion = false;
+    overlay(filename1, filename2, isUnion, precModel );
   }
   
-  void runTest() throws Exception 
-  {
-    String dir = "D:/proj/jts/testing/pglist-20200708/";
-    overlay(dir + "dbca-poly-sort.wkt", null, precModel );
-    //overlay(dir + "dbca-poly-sort.wkt", dir + "dbca-poly-sort.wkt", precModel);
-  }
-
-  void overlay(String file1, String file2, PrecisionModel pm) throws Exception 
-  {
-    run(file1, file2, false, pm); 
-  }
-  
-	void run(String file1, String file2, boolean isUnion, PrecisionModel pm) throws Exception 
+  void overlay(String file1, String file2, boolean isUnion, PrecisionModel pm) throws Exception 
   {
     System.out.println("File 1: " + file1);
     if (file2 != null) System.out.println("File 2: " + file2);
