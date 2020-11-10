@@ -1,15 +1,11 @@
 package forse.geomstream;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.util.LinearComponentExtracter;
 
 import forse.lineseg.GeometrySegmentExtracter;
 import forse.lineseg.LineSeg;
@@ -17,7 +13,6 @@ import forse.lineseg.SegmentSink;
 import forse.lineseg.SegmentSource;
 import forse.noding.SegmentStreamSorter;
 import forse.noding.SweepLineFront;
-import forse.util.CollectionsUtil;
 
 public class GeometryStreamSegmentSource 
 implements SegmentSource

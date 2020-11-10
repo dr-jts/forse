@@ -16,6 +16,7 @@ public class PolygonOverlayGeometryStream implements GeometryStream
   private GeometryStreamSegmentSource segSrc;
   private MergeSortGeometryStream merger;
   private GeometryCreatorSink gcSink;
+  private boolean isValidating = true;
   
   public PolygonOverlayGeometryStream(GeometryFactory geomFactory) 
   {
@@ -28,6 +29,9 @@ public class PolygonOverlayGeometryStream implements GeometryStream
     this.precisionModel = precisionModel;
   }
 
+  public void setValidating(boolean isValidating) {
+	  this.isValidating = isValidating;
+  }
   public void create(GeometryStream g1, GeometryStream g2)
   {
     merger = new MergeSortGeometryStream();
@@ -38,7 +42,7 @@ public class PolygonOverlayGeometryStream implements GeometryStream
     gcSink = new GeometryCreatorSink(geomFactory);
     
     PolygonOverlay overlay = new PolygonOverlay(geomFactory, precisionModel);
-    overlay.init(segSrc, gcSink, true);
+    overlay.init(segSrc, gcSink, isValidating);
   }
   
   public MergeSortGeometryStream getMerger()

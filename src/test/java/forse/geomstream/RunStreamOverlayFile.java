@@ -1,13 +1,10 @@
 package forse.geomstream;
 
-import java.io.FileInputStream;
-
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.io.WKTReader;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.util.Memory;
 import org.locationtech.jts.util.Stopwatch;
-import org.locationtech.jtstest.testbuilder.io.shapefile.Shapefile;
 
 import forse.geomsink.StatisticsGeometrySink;
 import forse.noding.SweepLineNoder;
@@ -15,11 +12,11 @@ import forse.polygonize.SweepLinePolygonizer;
 
 
 
-public class TestStreamOverlayFile 
+public class RunStreamOverlayFile 
 {
   public static void main(String[] args) throws Exception
   {
-  	TestStreamOverlayFile test = new TestStreamOverlayFile();
+  	RunStreamOverlayFile test = new RunStreamOverlayFile();
     try {
       test.run();
     }
@@ -28,43 +25,40 @@ public class TestStreamOverlayFile
     }
   }
   
-  private GeometryFactory geomFact = new GeometryFactory();
-  private WKTReader reader = new WKTReader(geomFact);
+  private PrecisionModel precModel = new PrecisionModel(1000000000);
+  private GeometryFactory geomFact = new GeometryFactory(precModel);
+  private boolean isOutput = false;
 
   void run() throws Exception 
   {
-    runSewell();
-    //runGio();
-    //runMI();
-    //runTSB();
-    //runTimberline();
+	  runTest();
   }
   
-  void runSewell() throws Exception 
+  void runTest() throws Exception 
   {
-    String dir = "C:\\data\\martin\\proj\\jts\\testing\\overlay\\sewell\\sample_data";
-    overlay(dir + "left_polygons_19.shp", 
-        dir+"right_polygons_19.shp");
+    String dir = "D:/proj/jts/testing/pglist-20200708/";
+    overlay(dir + "dbca-poly-sort.wkt", null, precModel );
+    //overlay(dir + "dbca-poly-sort.wkt", dir + "dbca-poly-sort.wkt", precModel);
   }
 
-  void overlay(String file1, String file2) throws Exception 
+  void overlay(String file1, String file2, PrecisionModel pm) throws Exception 
   {
-    run(file1, file2, false); 
+    run(file1, file2, false, pm); 
   }
   
-	void run(String file1, String file2, boolean isUnion) throws Exception 
+	void run(String file1, String file2, boolean isUnion, PrecisionModel pm) throws Exception 
   {
     System.out.println("File 1: " + file1);
-    System.out.println("File 2: " + file2);
+    if (file2 != null) System.out.println("File 2: " + file2);
 
-    GeometryStream gs1 = createShapefileStream(file1);
+    GeometryStream gs1 = createStream(file1);
     GeometryStream gs2 = null;
     if (file2 != null)
-      gs2 = createShapefileStream(file2);
+      gs2 = createStream(file2);
     
     Stopwatch sw = new Stopwatch();
 
-    overlay(gs1, gs2);
+    overlay(gs1, gs2, pm);
     
     System.out.println("  --  Time: " + sw.getTimeString()
         + "  Mem: " + Memory.usedTotalString());
@@ -72,21 +66,23 @@ public class TestStreamOverlayFile
     
   }
   
-  GeometryStream createShapefileStream(String filename)
+  GeometryStream createStream(String filename)
   throws Exception
   {
-    Shapefile shpfile = new Shapefile(new FileInputStream(filename));
-    return new ShapefileGeometryStream(shpfile, geomFact);
+    return new WKTGeometryStream(filename, geomFact);
   }
     
-  void overlay(GeometryStream g1, GeometryStream g2)
+  void overlay(GeometryStream g1, GeometryStream g2, PrecisionModel pm)
   {
-    PolygonOverlayGeometryStream overlay = new PolygonOverlayGeometryStream(geomFact);
+    PolygonOverlayGeometryStream overlay = new PolygonOverlayGeometryStream(geomFact, pm);
+    overlay.setValidating(true);
     overlay.create(g1, g2);
     
     int count = 0;
     while (true) {
       Geometry g = overlay.next();
+      if (isOutput)
+    	  System.out.println(g);
       count++;
       if (g == null) break;
     }
