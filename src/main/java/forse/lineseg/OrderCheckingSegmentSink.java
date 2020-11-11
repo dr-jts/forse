@@ -2,17 +2,17 @@ package forse.lineseg;
 
 import java.util.*;
 
-public class OrderValidatingSegmentSink
+public class OrderCheckingSegmentSink
 implements SegmentSink
 {
   private boolean isOutputEnabled = false;
   private LineSeg lastSeg = null;
   
-  public OrderValidatingSegmentSink()
+  public OrderCheckingSegmentSink()
   {
   }
   
-  public OrderValidatingSegmentSink(boolean isOutputEnabled)
+  public OrderCheckingSegmentSink(boolean isOutputEnabled)
   {
     this.isOutputEnabled = isOutputEnabled;
   }

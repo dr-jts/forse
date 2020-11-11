@@ -15,7 +15,7 @@ import org.locationtech.jts.util.Memory;
 import org.locationtech.jts.util.Stopwatch;
 
 import forse.lineseg.GeometrySegmentExtracterSource;
-import forse.lineseg.OrderValidatingSegmentSink;
+import forse.lineseg.OrderCheckingSegmentSink;
 import forse.noding.SweepLineNoder;
 
 public class OverlayFilePerfTest 
@@ -96,7 +96,7 @@ public class OverlayFilePerfTest
 		
 //		GeometryCreatorSink endSink = new GeometryCreatorSink(geomFact);
 //		NullSegmentSink endSink = new NullSegmentSink();
-		OrderValidatingSegmentSink endSink = new OrderValidatingSegmentSink();
+		OrderCheckingSegmentSink endSink = new OrderCheckingSegmentSink();
 		
 		extracter.setSink(noder);
 		noder.setSink(endSink);
