@@ -219,8 +219,8 @@ Input - Polygons: 30327   Pts: 2955958
       if (g == null) break;
     }
     System.out.println("Input - Polygons: " 
-        + overlay.getMerger().getGeometryCount()
-        + "   Pts: " + overlay.getMerger().getCoordinateCount());
+        + overlay.getGeometryCount()
+        + "   Pts: " + overlay.getCoordinateCount());
     System.out.println("Output - Polygons: " + count);
   }
   

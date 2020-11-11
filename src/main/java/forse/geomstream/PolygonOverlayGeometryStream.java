@@ -46,10 +46,8 @@ public class PolygonOverlayGeometryStream implements GeometryStream
     overlay.init(segSrc, gcSink, isValidating);
   }
   
-  public MergeSortGeometryStream getMerger()
-  {
-    return merger;
-  }
+  public int getGeometryCount() { return merger.getGeometryCount(); }
+  public long getCoordinateCount() { return merger.getCoordinateCount(); }
 
   @Override
   public Geometry next()
@@ -57,8 +55,8 @@ public class PolygonOverlayGeometryStream implements GeometryStream
     fillNext();
     if (gcSink.size() == 0)
       return null;
-    // pop the next output geometry and return it
     
+    // pop the next output geometry and return it
     List<Geometry> geoms = gcSink.getGeometryList();
     Geometry g = geoms.get(0);
     geoms.remove(0);
@@ -67,6 +65,9 @@ public class PolygonOverlayGeometryStream implements GeometryStream
   
   private void fillNext()
   {
+    /**
+     * Push segments into pipeline until a geometry is ready to extract.
+     */
     while (gcSink.size() == 0) {
       boolean isMore = segSrc.processOne();
       if (! isMore) {

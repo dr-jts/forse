@@ -79,8 +79,8 @@ public class RunStreamOverlayFile
       if (g == null) break;
     }
     System.out.println("Input - Polygons: " 
-        + overlay.getMerger().getGeometryCount()
-        + "   Pts: " + overlay.getMerger().getCoordinateCount());
+        + overlay.getGeometryCount()
+        + "   Pts: " + overlay.getCoordinateCount());
     System.out.println("Output - Polygons: " + count);
   }
   
