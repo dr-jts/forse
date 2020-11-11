@@ -1,5 +1,6 @@
 package forse.perf;
 
+import java.util.List;
 import java.util.Random;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -15,14 +16,14 @@ import forse.geomstream.GeometryStream;
 import forse.geomstream.GeometryStreamSegmentSource;
 
 /**
- * Generates a sequence of annular circles as a stream, and overlays them.
+ * Generates an X-sorted stream of annular circles, and overlays them.
  * Noding is validated. Stress-tests topology creation, including holes and
  * faces created by holes covered by other polygons.
  * 
  * @author Martin Davis
  * 
  */
-public class StreamingCirclesOverlayer
+public class OverlappingRingsOverlay implements GeometryStream
 {
   static final double ANNULAR_FRACTION = 0.6;
   
@@ -30,33 +31,64 @@ public class StreamingCirclesOverlayer
 
   private GeometryStreamSegmentSource segSrc;
 
-  public StreamingCirclesOverlayer()
+  private GeometryCreatorSink gcSink;
+
+  public OverlappingRingsOverlay()
   {
 
   }
 
-  public void evaluate(int numCircles)
+  public void evaluateAll(int numCircles)
   {
-    GeometryStream geomStream = new CircleGeometryStream(numCircles);
+    init(numCircles);
+    segSrc.process();
+    Geometry result = gcSink.getGeometry();
+    System.out.println(result);
+  }
+  
+  public void init(int numCircles) {
+    GeometryStream geomStream = new RingGeometryStream(numCircles);
 
     segSrc = new GeometryStreamSegmentSource(geomStream);
 
     // ----- sink
-    GeometryCreatorSink gcSink = new GeometryCreatorSink(geomFact);
+    gcSink = new GeometryCreatorSink(geomFact);
     // StatisticsGeometrySink gcSink = new StatisticsGeometrySink();
 
     // ---- create pipeline
     PrecisionModel precModel = new PrecisionModel(1000000);
     PolygonOverlay overlay = new PolygonOverlay(geomFact, precModel);
     overlay.init(segSrc, gcSink, true);
-
-    segSrc.process();
-
-    Geometry result = gcSink.getGeometry();
-    System.out.println(result);
   }
 
-  static class CircleGeometryStream implements GeometryStream
+  public Geometry next()
+  {
+    fillNext();
+    if (gcSink.size() == 0)
+      return null;
+    
+    // pop the next output geometry and return it
+    List<Geometry> geoms = gcSink.getGeometryList();
+    Geometry g = geoms.get(0);
+    geoms.remove(0);
+    return g;
+  }
+  
+  private void fillNext()
+  {
+    /**
+     * Push segments into pipeline until a geometry is ready to extract.
+     */
+    while (gcSink.size() == 0) {
+      boolean isMore = segSrc.processOne();
+      if (! isMore) {
+        segSrc.close();
+        break;
+      }
+    }
+  }
+  
+  static class RingGeometryStream implements GeometryStream
   {
     private int numCircles = 20;
 
@@ -74,7 +106,7 @@ public class StreamingCirclesOverlayer
 
     private double x = 0;
 
-    public CircleGeometryStream(int numCircles)
+    public RingGeometryStream(int numCircles)
     {
       this.numCircles = numCircles;
     }
@@ -91,13 +123,13 @@ public class StreamingCirclesOverlayer
     private Geometry createRandom()
     {
       double y = height * rand.nextDouble();
-      Geometry circle = createCircle(x, y);
+      Geometry circle = createRing(x, y);
       // System.out.println(circle);
       x += xIncrement;
       return circle;
     }
 
-    private Geometry createCircle(double x, double y)
+    private Geometry createRing(double x, double y)
     {
       Geometry centre = geomFact.createPoint(new Coordinate(x, y));
       Polygon outer = (Polygon) centre.buffer(radius);
