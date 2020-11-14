@@ -88,19 +88,19 @@ public class OverlappingRingsOverlay implements GeometryStream
     }
   }
   
-  static class RingGeometryStream implements GeometryStream
+  public static class RingGeometryStream implements GeometryStream
   {
     private int numCircles = 20;
 
     private int count = 0;
 
-    private double height = 100;
+    private double height = 1000;
 
     private double radius = 10;
 
     private double innerRadius = ANNULAR_FRACTION * radius;
 
-    private double xIncrement = 2;
+    private double xIncrement = 0.1;
 
     private Random rand = new Random(1);
 
@@ -109,6 +109,10 @@ public class OverlappingRingsOverlay implements GeometryStream
     public RingGeometryStream(int numCircles)
     {
       this.numCircles = numCircles;
+      int sqrt = (int) Math.sqrt(numCircles);
+      double side = sqrt * radius;
+      height = side;
+      xIncrement = side / numCircles;
     }
 
     @Override
