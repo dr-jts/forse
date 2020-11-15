@@ -33,19 +33,19 @@ implements SegmentSink, GeometrySink
     Geometry line = geomFact.createLineString(
         new Coordinate[] { seg.getCoordinate(0), seg.getCoordinate(1) }
         );
-    TestBuilderProxy.showIndicator(line, Color.CYAN);
-    //FunctionsUtil.showIndicator(line, Color.CYAN);
+    //TestBuilderProxy.showIndicator(line, Color.CYAN);
+    FunctionsUtil.showIndicator(line, Color.CYAN);
   }
   
   private static boolean isActive() {
-    return FunctionsUtil.isTestBuilderRunning();
+    return FunctionsUtil.isShowingIndicators();
   }
 
   public void process(Geometry geom) {
     if (! isActive()) return;
     
-    TestBuilderProxy.showIndicator(geom, Color.CYAN);
-    //FunctionsUtil.showIndicator(geom, Color.CYAN);
+    //TestBuilderProxy.showIndicator(geom, Color.CYAN);
+    FunctionsUtil.showIndicator(geom, Color.CYAN);
     //OperationMonitorManager.indicator = geom;
   }
 

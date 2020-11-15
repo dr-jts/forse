@@ -130,7 +130,7 @@ public class FastOverlayFunctions
 
     //----- sink
     GeometryCreatorSink gcSink = new GeometryCreatorSink(geomFact);
-    
+    // only active if TestBuilder is running (to avoid perf hit)
     GeometryMonitorSink monSink = new GeometryMonitorSink();
     GeometrySink sink = MultiGeometrySink.create(gcSink, monSink);
     
