@@ -5,6 +5,7 @@ import java.util.*;
 import forse.LineNoder;
 import forse.PolygonOverlay;
 import forse.geomsink.GeometryCreatorSink;
+import forse.geomsink.GeometrySink;
 import forse.geomsink.MultiGeometrySink;
 import forse.lineseg.GeometrySegmentExtracterSource;
 import forse.lineseg.LineSeg;
@@ -129,11 +130,14 @@ public class FastOverlayFunctions
 
     //----- sink
     GeometryCreatorSink gcSink = new GeometryCreatorSink(geomFact);
+    
     GeometryMonitorSink monSink = new GeometryMonitorSink();
+    GeometrySink sink = MultiGeometrySink.create(gcSink, monSink);
     
     //---- create pipeline
     PolygonOverlay overlay = new PolygonOverlay(geomFact, precModel);
-    overlay.init(extracter, MultiGeometrySink.create(gcSink, monSink), isValidating);
+
+    overlay.init(extracter, sink, isValidating);
     //----- set overlay options
     overlay.setUnion(isUnion);
     overlay.setUnionCreateHolesAsPolys(unionCreateHolesAsPolys);
